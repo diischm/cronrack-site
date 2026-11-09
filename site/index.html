@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CronRack</title>
+<meta name="description" content="What needs my attention? CronRack answers it in two seconds.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div class="bg" aria-hidden="true"><div class="wash wash--a"></div><div class="wash wash--b"></div></div>
+
+<main id="top">
+<section class="hero"><div class="wrap">
+  <div class="lock" aria-label="CronRack">
+    <span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="word" aria-hidden="true"><span>CronRack</span></span>
+  </div>
+  <h1><span class="l"><span>What needs</span></span><span class="l"><span>my attention?</span></span></h1>
+  <p class="lede after">CronRack answers that in two seconds. Your hosts, Docker, Kubernetes and network on one calm dashboard you open from your phone. <b>Free, open source and self-hosted</b>, so your data never leaves home.</p>
+  <div class="cta after"><a class="pill pill--o" href="#install">Get started</a><a class="pill pill--g" href="https://github.com/diischm/cronrack">View on GitHub</a></div>
+
+  <div class="preview after" id="stage">
+    <div class="glass" id="pv" role="img" aria-label="Dashboard preview: network OK; node-a healthy; edge-pi disk at 91 percent">
+      <div class="pv">
+        <div class="pv__net"><b>Network OK</b>
+          <div class="chain">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span class="ln"></span>
+            <svg viewBox="0 0 24 24"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 16.5h.01M11 16.5h.01M8 9a6 6 0 0 1 8 0M5.5 6.5a10 10 0 0 1 13 0"/></svg><span class="ln"></span>
+            <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h2"/></svg><span class="ln"></span>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          </div>
+        </div>
+        <div class="pv__host"><b>node-a</b><small>k3s server · 14 pods</small>
+          <div class="m">CPU<span><i class="w22"></i></span></div><div class="m">RAM<span><i class="w48"></i></span></div><div class="m">DISK<span><i class="w36"></i></span></div></div>
+        <div class="pv__host warn"><b>edge-pi</b><small>Disk / at 91%</small>
+          <div class="m">CPU<span><i class="w15"></i></span></div><div class="m">RAM<span><i class="w30"></i></span></div><div class="m y">DISK<span><i class="w91"></i></span></div></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="what"><div class="wrap">
+  <h2 class="rv">One place. <span>Everything you run.</span></h2>
+  <p class="intro rv">The overview stays short on purpose. When something breaks you see it first, and the details are one tap away.</p>
+  <div class="rows">
+    <div class="row rv"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 12h3M14 12h3"/></svg><h3>Your network</h3><p>You, router, ISP, internet. See exactly where it broke, not just that it did.</p></div>
+    <div class="row rv"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><h3>Hosts</h3><p>CPU, memory, disks, updates and reboots, with history and no metrics stack to run.</p></div>
+    <div class="row rv"><svg viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="10" rx="2"/><path d="M7 10V6h4v4M13 10V6h4v4"/></svg><h3>Docker &amp; services</h3><p>Stopped containers, restart loops and failed systemd units, caught as they happen.</p></div>
+    <div class="row rv"><svg viewBox="0 0 24 24"><path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/><path d="M12 22V12M20.5 7L12 12 3.5 7"/></svg><h3>Kubernetes</h3><p>Nodes, pods, Helm and Argo CD. Know when a node drops or an app drifts from Git.</p></div>
+    <div class="row rv"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><h3>Calm alerts</h3><p>Presets, quiet hours and a daily summary. Discord only pings you when it matters.</p></div>
+  </div>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <h2 class="rv">Running in <span>three steps.</span></h2>
+  <p class="intro rv">One server, one small agent per machine. It runs fine on a Raspberry Pi, and you never open a port on your hosts.</p>
+  <div class="inst">
+    <ol class="steps rv" role="tablist" aria-label="Install steps">
+      <li><button role="tab" aria-selected="true" data-s="0"><span class="n">01</span><b>Start the server</b><small>Anywhere Docker runs.</small></button></li>
+      <li><button role="tab" aria-selected="false" data-s="1"><span class="n">02</span><b>Add a host</b><small>Copy the command from your dashboard.</small></button></li>
+      <li><button role="tab" aria-selected="false" data-s="2"><span class="n">03</span><b>Open it anywhere</b><small>Your phone, over Tailscale or your own domain.</small></button></li>
+    </ol>
+    <div class="glass term rv" role="tabpanel" aria-live="polite">
+      <div class="term__bar"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="tt">server</span></div>
+      <pre id="code"></pre>
+    </div>
+  </div>
+</div></section>
+
+<section id="security"><div class="wrap">
+  <h2 class="rv">It sees everything. <span>So it's built to be boring to attack.</span></h2>
+  <p class="intro rv">CronRack is open source and every line is public, so you can check all of this yourself.</p>
+  <div class="facts">
+    <div class="fact rv"><b>Outbound only</b><span>Agents connect out over TLS. Nothing listens on your hosts.</span></div>
+    <div class="fact rv"><b>Read-only by default</b><span>No shell, no remote commands. Kubernetes access uses a read-only role.</span></div>
+    <div class="fact rv"><b>Scanned every build</b><span>Images ship only with zero known high or critical vulnerabilities.</span></div>
+    <div class="fact rv"><b>Stays home</b><span>Self-hosted, no telemetry, no cloud account.</span></div>
+  </div>
+</div></section>
+
+<section class="end"><div class="wrap">
+  <span class="bars rv" aria-hidden="true"><i></i><i></i><i></i></span>
+  <h2 class="rv">Stop checking five dashboards.</h2>
+  <p class="intro rv">Open one. See what needs you. Get back to your day.</p>
+  <div class="cta rv"><a class="pill pill--o" href="#install">Get started</a><a class="pill pill--g" href="https://github.com/diischm/cronrack">Star on GitHub</a></div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <a class="nav__logo" href="#top"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>CronRack</a>
+  <a href="https://github.com/diischm/cronrack">github.com/diischm/cronrack</a>
+</div></footer>
+
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
