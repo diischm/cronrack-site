@@ -102,7 +102,13 @@ strong,b{font-weight:800}
 @keyframes glow-core{to{transform:scale(1.15,1.05) translateY(20px)}}
 /* wordmark in the logo's orange, fading to white */
 .hero--glow .word span{background:linear-gradient(90deg,#ff8a4c 0%,var(--accent) 35%,#ffc9a8 70%,var(--text) 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  /* The gradient is painted only inside the span's box, and with the tight letter-spacing the last
+     letter's edge sticks out past it (the "k" was clipped). Widen the box on both sides and pull it
+     back with an equal negative margin so the word doesn't move; the parent's padding grows to match
+     so its overflow:hidden (for the rise-in) doesn't cut the edge instead. */
+  padding:0 .12em;margin:0 -.12em}
+.hero--glow .word{padding-left:.16em;padding-right:.16em}
 @media (max-width:860px){
   .glow i{filter:blur(48px)}
   .glow__waves i{width:44%;top:calc(50% - 560px);height:300px;filter:blur(44px)}
