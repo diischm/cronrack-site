@@ -1,0 +1,164 @@
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  terraform:
+    name: terraform fmt / validate / tflint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_wrapper: false
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive -diff
+
+      - name: terraform init
+        run: terraform init -backend=false -input=false
+
+      - name: terraform validate
+        run: terraform validate
+
+      - uses: terraform-linters/setup-tflint@90f302c255ef959cbfb4bd10581afecdb7ece3e6 # v4.1.1
+
+      - name: tflint
+        run: |
+          tflint --init
+          tflint --format compact
+
+  trivy:
+    name: trivy config scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Trivy (gate on HIGH/CRITICAL)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: config
+          scan-ref: terraform/
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+
+      - name: Trivy (all findings as SARIF)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: config
+          scan-ref: terraform/
+          format: sarif
+          output: trivy.sarif
+          exit-code: "0"
+
+      - name: Upload to GitHub code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-config
+
+  checkov:
+    name: checkov
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@3f0caf0c3aa9f56ade6b49f6e60b63aaeafb75a3 # v12.3141.0
+        with:
+          directory: terraform/
+          framework: terraform
+          output_format: cli,sarif
+          output_file_path: console,checkov.sarif
+          soft_fail: false
+
+      - name: Upload to GitHub code scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
+        with:
+          sarif_file: checkov.sarif
+          category: checkov
+
+  secrets:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  site:
+    name: site checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - name: CSP rules
+        run: |
+          if grep -nE 'style=|<style|<script>[^<]|\son[a-z]+=|innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(|fonts\.googleapis' \
+               site/*.html site/assets/*.js; then
+            echo "::error::Found code that a strict CSP would block"
+            exit 1
+          fi
+          echo "OK: nothing a strict CSP would block"
+
+      - name: No private addresses or local paths
+        run: |
+          if grep -rnE '192\.168\.|10\.[0-9]+\.[0-9]+\.[0-9]+|\.ts\.net|/home/[a-z]+' site/; then
+            echo "::error::Private address or local path found in site/"
+            exit 1
+          fi
+          echo "OK: no private addresses"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: HTML validity
+        run: npx --yes html-validate@9 "site/**/*.html"
+
+      - name: Broken links
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --offline --no-progress --root-dir "${{ github.workspace }}/site" "site/**/*.html"
+          fail: true
