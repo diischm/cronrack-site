@@ -57,6 +57,60 @@ strong,b{font-weight:800}
 .word span{transform:translateY(105%);animation:rise .8s var(--ease) 1.5s forwards}
 .in{opacity:0;transform:translateY(12px);animation:show .7s var(--ease) forwards}
 .bio.in{animation-delay:1.9s}.cta.in{animation-delay:2.15s}.hint.in{animation-duration:.6s;animation-delay:2.7s}
+/* hero glow (index only): an orange haze in the logo's colours drops in from the top and fills the
+   whole top edge, brightest in the corners and darker in the middle above the logo, then keeps
+   moving like a wave: a row of crests rises and falls one after another so a swell travels left to
+   right along the top, the corner glows sway, and the peach patch rides across on the swell. Pure CSS. */
+.hero__in,.hint{z-index:1}
+/* It slides down in 1.6s but brightens from dark over 3.4s, in step with the logo, wordmark and text. */
+.glow{position:absolute;inset:0;overflow:hidden;pointer-events:none;
+  animation:glow-drop 1.6s var(--ease) both,glow-fade 3.4s cubic-bezier(.45,0,.55,1) both}
+.glow i{position:absolute;display:block;border-radius:50%;filter:blur(64px)}
+/* the swell: seven crests across the top, each a step later than the one on its left */
+.glow__waves{position:absolute;inset:0}
+.glow__waves i{width:34%;top:calc(50% - 640px);height:380px;filter:blur(56px);
+  background:radial-gradient(closest-side,rgba(242,107,46,.48),rgba(242,107,46,.14) 65%,rgba(242,107,46,0));
+  animation:glow-wave 3.6s ease-in-out infinite alternate}
+.glow__waves i:nth-child(1){left:-14%;animation-delay:0s}
+.glow__waves i:nth-child(2){left:4%;animation-delay:-.6s}
+.glow__waves i:nth-child(3){left:22%;animation-delay:-1.2s}
+.glow__waves i:nth-child(4){left:40%;animation-delay:-1.8s}
+.glow__waves i:nth-child(5){left:58%;animation-delay:-2.4s}
+.glow__waves i:nth-child(6){left:76%;animation-delay:-3s}
+.glow__waves i:nth-child(7){left:94%;animation-delay:-3.6s}
+/* corners: pushed past the edges so they fill them */
+.glow__tl{left:-22%;width:62%;top:-280px;height:640px;
+  background:radial-gradient(closest-side,rgba(242,107,46,.72),rgba(242,107,46,.22) 60%,rgba(242,107,46,0));
+  animation:glow-tl 7s ease-in-out 1.3s infinite alternate}
+.glow__tr{right:-22%;width:62%;top:-300px;height:660px;
+  background:radial-gradient(closest-side,rgba(255,125,64,.62),rgba(168,58,18,.4) 55%,rgba(168,58,18,0));
+  animation:glow-tr 8s ease-in-out 1.3s infinite alternate}
+/* lighter patch that sweeps from side to side */
+.glow__peach{left:-10%;width:40%;top:calc(50% - 600px);height:300px;
+  background:radial-gradient(closest-side,rgba(255,160,105,.45),rgba(255,160,105,0));
+  animation:glow-sweep 9s ease-in-out 1.3s infinite alternate}
+/* dark core over the middle, just above the logo */
+.glow__core{left:28%;right:28%;top:calc(50% - 560px);height:400px;
+  background:radial-gradient(closest-side,rgba(11,12,15,.78),rgba(11,12,15,.35) 60%,rgba(11,12,15,0));
+  animation:glow-core 6s ease-in-out 1.3s infinite alternate}
+@keyframes glow-drop{0%{transform:translateY(-80vh)}100%{transform:none}}
+@keyframes glow-fade{0%{opacity:0}100%{opacity:1}}
+@keyframes glow-wave{0%{transform:translateY(-50px) scale(1,.8)}100%{transform:translateY(60px) scale(1.1,1.2)}}
+@keyframes glow-tl{0%{transform:none}50%{transform:translate(6vw,50px) rotate(10deg) scale(1.08)}100%{transform:translate(12vw,-10px) rotate(-6deg) scale(.96)}}
+@keyframes glow-tr{0%{transform:none}50%{transform:translate(-6vw,-30px) rotate(-10deg) scale(1.1)}100%{transform:translate(-12vw,40px) rotate(6deg) scale(.95)}}
+@keyframes glow-sweep{0%{transform:translate(0,0)}25%{transform:translate(28vw,55px) scale(1.15)}50%{transform:translate(55vw,-25px)}75%{transform:translate(82vw,55px) scale(1.15)}100%{transform:translate(110vw,-20px)}}
+@keyframes glow-core{to{transform:scale(1.15,1.05) translateY(20px)}}
+/* wordmark in the logo's orange, fading to white */
+.hero--glow .word span{background:linear-gradient(90deg,#ff8a4c 0%,var(--accent) 35%,#ffc9a8 70%,var(--text) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+@media (max-width:860px){
+  .glow i{filter:blur(48px)}
+  .glow__waves i{width:44%;top:calc(50% - 560px);height:300px;filter:blur(44px)}
+  .glow__tl,.glow__tr{width:80%;height:520px}
+  .glow__peach{top:calc(50% - 500px);height:220px}
+  .glow__core{left:15%;right:15%;top:calc(50% - 470px);height:320px}
+}
+
 @keyframes fall{to{transform:translateY(0)}}
 @keyframes land{0%{transform:translateY(0) scale(1.08,.6)}55%{transform:translateY(-4%) scale(.97,1.08)}100%{transform:none}}
 @keyframes rise{to{transform:none}}
