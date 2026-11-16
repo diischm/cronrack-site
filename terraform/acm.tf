@@ -12,3 +12,9 @@ resource "aws_acm_certificate" "site" {
     create_before_destroy = true
   }
 }
+
+resource "aws_acm_certificate_validation" "site" {
+  provider                = aws.us_east_1
+  certificate_arn         = aws_acm_certificate.site.arn
+  validation_record_fqdns = [for o in aws_acm_certificate.site.domain_validation_options : o.resource_record_name]
+}
